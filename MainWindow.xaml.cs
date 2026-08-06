@@ -27,7 +27,7 @@ namespace SchedulerUI {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    
+
     public partial class MainWindow : Window {
 
         public MainWindow() {
@@ -41,7 +41,12 @@ namespace SchedulerUI {
         private List<string> durationHistory = new List<string>();
         private List<string> priceHistory = new List<string>();
 
-        private  void AddToHistory(ComboBox comboBox, List<string> serviceHistory, string newValue) {
+        private void RefreshDataGrid() {
+            AppointmentsDataGrid.ItemsSource = null; // сброс источника данных
+            AppointmentsDataGrid.ItemsSource = appointmentManager.GetAppointments();
+        }
+
+        private void AddToHistory(ComboBox comboBox, List<string> serviceHistory, string newValue) {
             if (!serviceHistory.Contains(newValue)) {
                 serviceHistory.Add(newValue);
                 comboBox.Items.Add(newValue);
@@ -68,7 +73,7 @@ namespace SchedulerUI {
             string price = PriceComboBox.Text;
 
             Client client = new Client { Name = clientName };
-            
+
             if (!int.TryParse(duration, out int parsedDuration)) {
                 MessageBox.Show("Некорректное значение длительности услуги.");
                 return;
@@ -77,10 +82,10 @@ namespace SchedulerUI {
                 MessageBox.Show("Некорректное значение цены услуги.");
                 return;
             }
-            Service service = new Service { 
-                ServiceName = serviceName, 
-                TimeDuration = parsedDuration, 
-                Price = parsedPrice 
+            Service service = new Service {
+                ServiceName = serviceName,
+                TimeDuration = parsedDuration,
+                Price = parsedPrice
             };
 
 
@@ -94,17 +99,53 @@ namespace SchedulerUI {
                 AddToHistory(DurationComboBox, durationHistory, duration);
                 AddToHistory(PriceComboBox, priceHistory, price);
 
-                // обновить таблицу после записи
-                AppointmentsDataGrid.ItemsSource = null; // сброс источника данных
-                AppointmentsDataGrid.ItemsSource = appointmentManager.GetAppointments();
+                RefreshDataGrid();
 
             }
             catch (Exception ex) {
                 MessageBox.Show($"Ошибка при записи: {ex.Message}");
-            } 
+            }
+
+
+        }
+
+        private void CompleteAppointment_Click(object sender, RoutedEventArgs e) {
+
+            try {
+                if (AppointmentsDataGrid.SelectedItem is Appointment selectedAppointment) {
+                    appointmentManager.CompleteAppointment(selectedAppointment);
+                    MessageBox.Show($"Запись на {selectedAppointment.Time} для клиента {selectedAppointment.Client.Name} завершена.");
+                    RefreshDataGrid();
+                }
+                else {
+                    MessageBox.Show("Пожалуйста, выберите запись для завершения.");
+                }
+
+            }
+            catch (Exception ex) {
+                MessageBox.Show($"Ошибка при завершении записи: {ex.Message}");
+            }
+        }
 
 
             
+
+        private void CancelAppointment_Click(object sender, RoutedEventArgs e) {
+            if (AppointmentsDataGrid.SelectedItem is Appointment selectedAppointment) {
+                try {
+                    appointmentManager.CancelAppointmentByClientName(selectedAppointment.Client.Name, selectedAppointment.Time);
+                    MessageBox.Show($"Запись на {selectedAppointment.Time} для клиента {selectedAppointment.Client.Name} отменена.");
+
+                    RefreshDataGrid();
+                }
+                catch (Exception ex) {
+                    MessageBox.Show($"Ошибка при отмене записи: {ex.Message}");
+                }
+            }
+            else {
+                MessageBox.Show("Пожалуйста, выберите запись для отмены.");
+            }
+
         }
     }
 

@@ -77,7 +77,18 @@ namespace SchedulerUI {
         }
 
         public void CompleteAppointment(Appointment appointment) {
-            appointment.Status = Appointment.AppointmentStatus.Completed;
+            if (appointment == null) {
+                throw new ArgumentNullException(nameof(appointment));
+            }
+
+            if (appointment.Status == Appointment.AppointmentStatus.Scheduled) {
+                    appointment.Status = Appointment.AppointmentStatus.Completed;
+            }
+            else {
+                throw new Exception("Only scheduled appointments can be completed.");
+            }
+            
+
         }
 
         public List<Appointment> GetAppointments() {
