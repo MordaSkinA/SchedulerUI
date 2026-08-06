@@ -46,12 +46,25 @@ namespace SchedulerUI {
             AppointmentsDataGrid.ItemsSource = appointmentManager.GetAppointments();
         }
 
+        private void RescheduledAppointment(Appointment appointment, DateTime newTime) {
+            try {
+                appointmentManager.RescheduleAppointment(appointment, newTime);
+                MessageBox.Show($"Запись для клиента {appointment.Client.Name} перенесена на {newTime}.");
+                RefreshDataGrid();
+            }
+            catch (Exception ex) {
+                MessageBox.Show($"Ошибка при переносе записи: {ex.Message}");
+            }
+        }
+
         private void AddToHistory(ComboBox comboBox, List<string> serviceHistory, string newValue) {
             if (!serviceHistory.Contains(newValue)) {
                 serviceHistory.Add(newValue);
                 comboBox.Items.Add(newValue);
             }
         }
+
+
 
         private void RecordClient_Click(object sender, RoutedEventArgs e) {
 
@@ -128,7 +141,7 @@ namespace SchedulerUI {
         }
 
 
-            
+
 
         private void CancelAppointment_Click(object sender, RoutedEventArgs e) {
             if (AppointmentsDataGrid.SelectedItem is Appointment selectedAppointment) {
@@ -145,6 +158,23 @@ namespace SchedulerUI {
             else {
                 MessageBox.Show("Пожалуйста, выберите запись для отмены.");
             }
+
+        }
+
+        private void RescheduleAppointment_Click(object sender, RoutedEventArgs e) {
+            if (AppointmentsDataGrid.SelectedItem is Appointment selectedAppointment) {
+                RescheduleWindow rescheduleWindow = new RescheduleWindow();
+                if (rescheduleWindow.ShowDialog() == true) {
+                    DateTime? newDateTime = rescheduleWindow.SelectedDateTime;
+                    if (newDateTime.HasValue) {
+                        RescheduledAppointment(selectedAppointment, newDateTime.Value);
+                    }
+                }
+            }
+            else {
+                MessageBox.Show("Пожалуйста, выберите запись для переноса.");
+            }
+
 
         }
     }

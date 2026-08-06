@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Linq;
 using System.IO;
+using System.Diagnostics.CodeAnalysis;
 
 
 
@@ -43,16 +44,18 @@ namespace SchedulerUI {
         public AppointmentManager() {
         }
 
-        public void CheckTimeSlot(DateTime startTime, Service service) {
+        public void CheckTimeSlot(DateTime startTime, Service service, Appointment? excludeAppointment = null) {
             DateTime newStart = startTime;
             DateTime newEnd = startTime.AddMinutes(service.TimeDuration);
-
+            
             if (startTime < DateTime.Now) {
                 throw new Exception("Cannot schedule appointment in the past.");
             }
 
             foreach (var appointment in appointments) {
                 if (appointment.Status != Appointment.AppointmentStatus.Scheduled)
+                    continue;
+                if (appointment == excludeAppointment)
                     continue;
 
                 DateTime existingStart = appointment.Time;
@@ -74,6 +77,17 @@ namespace SchedulerUI {
                 Status = Appointment.AppointmentStatus.Scheduled
             };
             appointments.Add(appointment);
+        }
+
+        public void RescheduleAppointment(Appointment appointment, DateTime newTime) {
+            if (appointment == null) {
+                throw new ArgumentNullException(nameof(appointment));
+            }
+            if (appointment.Status != Appointment.AppointmentStatus.Scheduled) {
+                throw new Exception("Only scheduled appointments can be rescheduled.");
+            }
+            CheckTimeSlot(newTime, appointment.Service, appointment );
+            appointment.Time = newTime;
         }
 
         public void CompleteAppointment(Appointment appointment) {

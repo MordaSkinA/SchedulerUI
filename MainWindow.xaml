@@ -62,12 +62,13 @@
                 <DataGridTextColumn Header="Время" Binding="{Binding Time}" Width="200"/>
                 <DataGridTextColumn Header="Статус" Binding="{Binding Status}" Width="200"/>
 
-                <DataGridTemplateColumn Header="Действия" Width="210">
+                <DataGridTemplateColumn Header="Действия" Width="310">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
                                 <Button Content="Отменить" Click="CancelAppointment_Click" Margin="2" Width="100" Height="25"/>
                                 <Button Content="Завершить" Click="CompleteAppointment_Click" Margin="2" Width="100" Height="25"/>
+                                <Button Content="Перенести" Click="RescheduleAppointment_Click" Margin="2" Width="100" Height="25"/>
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
