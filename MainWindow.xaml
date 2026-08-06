@@ -8,7 +8,12 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid Margin="20">
-        <StackPanel>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0">
             <TextBlock Text="Имя клиента:"/>
             <TextBox x:Name="ClientNameTextBox" Margin="0,5,0,15"/>
 
@@ -21,13 +26,9 @@
             <TextBlock Text="Цена:"/>
             <ComboBox x:Name="PriceComboBox" IsEditable="True" Margin="0,5,0,15"/>
 
-            <!-- Поле выбора даты (календарь) -->
             <Label Content="Выберите дату:"/>
             <DatePicker x:Name="AppointmentDatePicker" DisplayDateStart="{x:Static sys:DateTime.Now}"/>
 
-            <!-- Поле ввода времени -->
-
-            <!-- Выпадающий список для выбора времени -->
             <Label Content="Выберите время:"/>
             <ComboBox x:Name="AppointmentTimeComboBox" Margin="0,5" SelectedIndex="0">
                 <ComboBoxItem Content="09:00"/>
@@ -53,5 +54,14 @@
 
             <Button Content="Записать клиента" Width="200" Height="40" Click="RecordClient_Click"/>
         </StackPanel>
+
+        <DataGrid x:Name="AppointmentsDataGrid" Grid.Row="1" Margin="0,20,0,0" AutoGenerateColumns="False" IsReadOnly="True">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Клиент" Binding="{Binding Client.Name}" Width="120"/>
+                <DataGridTextColumn Header="Услуга" Binding="{Binding Service.ServiceName}" Width="120"/>
+                <DataGridTextColumn Header="Время" Binding="{Binding Time}" Width="140"/>
+                <DataGridTextColumn Header="Статус" Binding="{Binding Status}" Width="100"/>
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </Window>

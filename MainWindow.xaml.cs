@@ -1,20 +1,25 @@
-﻿using System.Text;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing.Printing;
+using System.IO;
+using System.Linq;
+using System.Reflection.Metadata;
+using System.Security.Cryptography.X509Certificates;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
+using System.Windows.Media.Media3D;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System;
-using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
 using System.Xml.Linq;
-using System.Linq;
-using System.IO;
+using static System.Net.Mime.MediaTypeNames;
 
 
 
@@ -27,6 +32,8 @@ namespace SchedulerUI {
 
         public MainWindow() {
             InitializeComponent();
+            // обновить таблицу при запуске
+            AppointmentsDataGrid.ItemsSource = appointmentManager.GetAppointments();
         }
 
         private AppointmentManager appointmentManager = new AppointmentManager();
@@ -87,7 +94,12 @@ namespace SchedulerUI {
                 AddToHistory(DurationComboBox, durationHistory, duration);
                 AddToHistory(PriceComboBox, priceHistory, price);
 
-            } catch (Exception ex) {
+                // обновить таблицу после записи
+                AppointmentsDataGrid.ItemsSource = null; // сброс источника данных
+                AppointmentsDataGrid.ItemsSource = appointmentManager.GetAppointments();
+
+            }
+            catch (Exception ex) {
                 MessageBox.Show($"Ошибка при записи: {ex.Message}");
             } 
 
@@ -97,3 +109,5 @@ namespace SchedulerUI {
     }
 
 }
+
+
