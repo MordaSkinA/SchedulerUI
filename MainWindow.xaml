@@ -17,6 +17,9 @@
             <TextBlock Text="Имя клиента:"/>
             <TextBox x:Name="ClientNameTextBox" Margin="0,5,0,15"/>
 
+            <TextBlock Text="Телефон клиента:"/>
+            <TextBox x:Name="ClientPhoneTextBox" Margin="0,5,0,15"/>
+
             <TextBlock Text="Услуга:"/>
             <ComboBox x:Name="ServiceComboBox" IsEditable="True" Margin="0,5,0,15"/>
 

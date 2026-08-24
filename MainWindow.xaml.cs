@@ -85,7 +85,7 @@ namespace SchedulerUI {
             string duration = DurationComboBox.Text;
             string price = PriceComboBox.Text;
 
-            Client client = new Client { Name = clientName };
+            Client client = new Client { Name = clientName, PhoneNumber = ClientPhoneTextBox.Text };
 
             if (!int.TryParse(duration, out int parsedDuration)) {
                 MessageBox.Show("Некорректное значение длительности услуги.");
@@ -115,8 +115,9 @@ namespace SchedulerUI {
                 RefreshDataGrid();
 
             }
-            catch (Exception ex) {
-                MessageBox.Show($"Ошибка при записи: {ex.Message}");
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при записи: {ex.Message}\n\nInner: {ex.InnerException?.Message}");
             }
 
 
